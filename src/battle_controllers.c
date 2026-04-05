@@ -1,7 +1,6 @@
 #include "global.h"
 #include "battle.h"
 #include "battle_ai_main.h"
-#include "battle_ai_util.h"
 #include "battle_anim.h"
 #include "battle_arena.h"
 #include "battle_controllers.h"
@@ -27,6 +26,7 @@
 #include "task.h"
 #include "test_runner.h"
 #include "text.h"
+#include "trainer.h"
 #include "util.h"
 #include "wild_encounter.h"
 #include "constants/abilities.h"
@@ -386,7 +386,7 @@ static void InitBtlControllersInternal(void)
 
 bool32 IsValidForBattle(struct Pokemon *mon)
 {
-    u32 species = GetMonData(mon, MON_DATA_SPECIES_OR_EGG);
+    enum Species species = GetMonData(mon, MON_DATA_SPECIES_OR_EGG);
     return (species != SPECIES_NONE
          && species != SPECIES_EGG
          && GetMonData(mon, MON_DATA_HP) != 0
@@ -395,7 +395,7 @@ bool32 IsValidForBattle(struct Pokemon *mon)
 
 bool32 IsValidForBattleButDead(struct Pokemon *mon)
 {
-    u32 species = GetMonData(mon, MON_DATA_SPECIES_OR_EGG);
+    enum Species species = GetMonData(mon, MON_DATA_SPECIES_OR_EGG);
     return (species != SPECIES_NONE
          && species != SPECIES_EGG
          && GetMonData(mon, MON_DATA_IS_EGG) == FALSE);
@@ -1994,7 +1994,7 @@ static bool8 ShouldDoSlideInAnim(enum BattlerId battler)
 
 void StartSendOutAnim(enum BattlerId battler, bool32 dontClearTransform, bool32 dontClearSubstituteBit, bool32 doSlideIn)
 {
-    u16 species;
+    enum Species species;
     struct Pokemon *mon = GetBattlerMon(battler);
     u32 sendoutType;
 
@@ -2338,7 +2338,7 @@ void BtlController_HandleLoadMonSprite(enum BattlerId battler)
 {
     u32 y;
     struct Pokemon *mon = GetBattlerMon(battler);
-    u16 species = GetBattlerVisualSpecies(battler);
+    enum Species species = GetBattlerVisualSpecies(battler);
 
     if (gBattleTypeFlags & BATTLE_TYPE_GHOST && GetBattlerSide(battler) == B_SIDE_OPPONENT)
     {
@@ -2434,7 +2434,7 @@ void BtlController_HandleDrawTrainerPic(enum BattlerId battler, enum TrainerPicI
                                                    yPos,
                                                    subpriority);
 
-        gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerSprites[trainerPicId].palette.tag);
+        gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(trainerPicId, TRUE));
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].x2 = -DISPLAY_WIDTH;
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].sSpeedX = 2;
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.affineParam = trainerPicId;
@@ -2452,14 +2452,14 @@ void BtlController_HandleDrawTrainerPic(enum BattlerId battler, enum TrainerPicI
                                                              yPos,
                                                              subpriority);
 
-            gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerSprites[trainerPicId].palette.tag);
+            gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(trainerPicId, TRUE));
             gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.affineMode = ST_OAM_AFFINE_OFF;
             gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].hFlip = 1;
             gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].y2 = 48;
         }
         else
         {
-            DecompressTrainerBackPic(trainerPicId, battler);
+            LoadSpritePaletteWithTag(GetTrainerBackPicPalette(trainerPicId), GetTrainerPicTag(trainerPicId, FALSE));
             SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(battler));
             if (subpriority == -1)
                 subpriority = GetBattlerSpriteSubpriority(battler);
@@ -2472,7 +2472,7 @@ void BtlController_HandleDrawTrainerPic(enum BattlerId battler, enum TrainerPicI
 
             // Sets sprite priority to 1 so mons don't remain in foreground
             gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.priority = 1;
-            gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerBacksprites[trainerPicId].palette.tag);
+            gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(trainerPicId, FALSE));
         }
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].x2 = DISPLAY_WIDTH;
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].sSpeedX = -2;
@@ -2489,17 +2489,17 @@ void BtlController_HandleTrainerSlide(enum BattlerId battler, enum TrainerPicID 
 {
     if (IsOnPlayerSide(battler))
     {
-        DecompressTrainerBackPic(trainerPicId, battler);
+        LoadSpritePaletteWithTag(GetTrainerBackPicPalette(trainerPicId), GetTrainerPicTag(trainerPicId, FALSE));
         SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(battler));
         gBattleStruct->trainerSlideSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate,
                                                          80,
-                                                         (8 - gTrainerBacksprites[trainerPicId].coordinates.size) * 4 + 80,
+                                                         (8 - GetTrainerBackPicCoords(trainerPicId)->size) * 4 + 80,
                                                          30);
         if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && GetBattlerPosition(battler) == B_POSITION_PLAYER_LEFT)
             gBattlerSpriteIds[battler] = gBattleStruct->trainerSlideSpriteIds[battler];
         // Sets sprite priority to 1 so mons don't remain in foreground
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.priority = 1;
-        gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerBacksprites[trainerPicId].palette.tag);
+        gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(trainerPicId, FALSE));
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].x2 = -96;
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].sSpeedX = 2;
     }
@@ -2509,7 +2509,7 @@ void BtlController_HandleTrainerSlide(enum BattlerId battler, enum TrainerPicID 
         SetMultiuseSpriteTemplateToTrainerFront(trainerPicId, GetBattlerPosition(battler));
         gBattleStruct->trainerSlideSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 176, 40, 0);
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.affineParam = trainerPicId;
-        gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerSprites[trainerPicId].palette.tag);
+        gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(trainerPicId, TRUE));
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].x2 = 96;
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].x += 32;
         gSprites[gBattleStruct->trainerSlideSpriteIds[battler]].sSpeedX = -2;
@@ -3060,7 +3060,7 @@ static void AnimateMonAfterKnockout(enum BattlerId battler)
 
 static void LaunchKOAnimation(enum BattlerId battlerId, u16 animId, bool32 isFront)
 {
-    u32 species = GetBattlerVisualSpecies(battlerId);
+    enum Species species = GetBattlerVisualSpecies(battlerId);
     u32 spriteId = gBattlerSpriteIds[battlerId];
 
     gBattleStruct->battlerKOAnimsRunning++;
@@ -3082,7 +3082,7 @@ static void LaunchKOAnimation(enum BattlerId battlerId, u16 animId, bool32 isFro
 
 static u32 ReturnAnimIdForBattler(bool32 wasPlayerSideKnockedOut, u32 specificBattler)
 {
-    u32 species = GetBattlerVisualSpecies(specificBattler);
+    enum Species species = GetBattlerVisualSpecies(specificBattler);
     if (wasPlayerSideKnockedOut)
         return gSpeciesInfo[species].frontAnimId;
     else

@@ -4,7 +4,7 @@
 #include "battle_setup.h"
 #include "battle_util.h"
 #include "battle_controllers.h"
-#include "battle_ai_util.h"
+#include "battle_ai_record.h"
 #include "battle_gimmick.h"
 #include "battle_scripts.h"
 #include "constants/battle.h"
@@ -58,7 +58,11 @@ static bool32 HandleEndTurnVarious(enum BattlerId battler)
     for (enum BattlerId i = 0; i < gBattlersCount; i++)
     {
         if (gBattleMons[i].volatiles.throatChopTimer > 0)
+        {
             gBattleMons[i].volatiles.throatChopTimer--;
+            if (gBattleMons[i].volatiles.uproarTurns)
+                gBattleMons[i].volatiles.uproarTurns = 1; // end the move this turn
+        }
 
         if (gBattleMons[i].volatiles.lockOn > 0 && --gBattleMons[i].volatiles.lockOn == 0)
             gBattleMons[i].volatiles.battlerWithSureHit = 0;
@@ -207,7 +211,6 @@ static bool32 HandleEndTurnAffection(enum BattlerId battler)
     gBattleStruct->eventState.endTurnBattler++;
 
     if (!B_AFFECTION_MECHANICS
-     || !IsBattlerAlive(battler)
      || !IsOnPlayerSide(battler))
         return effect;
 
@@ -329,12 +332,14 @@ static bool32 HandleEndTurnFirstEventBlock(enum BattlerId battler)
         gBattleStruct->eventState.endTurnBlock++;
         break;
     case FIRST_EVENT_BLOCK_THRASH:
-        if (gBattleMons[battler].volatiles.rampageTurns && gBattleMons[battler].volatiles.semiInvulnerable != STATE_SKY_DROP)
+        if (B_RAMPAGE_CONFUSION < GEN_5
+         && gBattleMons[battler].volatiles.rampageTurns
+         && gBattleMons[battler].volatiles.semiInvulnerable != STATE_SKY_DROP_TARGET)
         {
             gBattleMons[battler].volatiles.rampageTurns--;
             if (gBattleMons[battler].volatiles.unableToUseMove)
             {
-                CancelMultiTurnMoves(battler, SKY_DROP_IGNORE);
+                CancelMultiTurnMoves(battler);
             }
             else if (!gBattleMons[battler].volatiles.rampageTurns && gBattleMons[battler].volatiles.multipleTurns)
             {
@@ -830,8 +835,7 @@ static bool32 HandleEndTurnHealBlock(enum BattlerId battler)
     {
         gBattleMons[battler].volatiles.healBlock = FALSE;
         gBattleScripting.battler = battler;
-        BattleScriptExecute(BattleScript_BufferEndTurn);
-        PREPARE_MOVE_BUFFER(gBattleTextBuff1, MOVE_HEAL_BLOCK);
+        BattleScriptExecute(BattleScript_HealBlockEndTurn);
         effect = TRUE;
     }
 
@@ -905,7 +909,7 @@ static bool32 HandleEndTurnYawn(enum BattlerId battler)
                 else
                     gBattleMons[battler].status1 |= (RandomUniform(RNG_SLEEP_TURNS, 2, 8));
 
-                CancelMultiTurnMoves(battler, SKY_DROP_STATUS_YAWN);
+                CancelMultiTurnMoves(battler);
                 TryActivateSleepClause(battler, gBattlerPartyIndexes[battler]);
                 BtlController_EmitSetMonData(battler, B_COMM_TO_CONTROLLER, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[battler].status1);
                 MarkBattlerForControllerExec(battler);
@@ -1222,8 +1226,13 @@ static bool32 HandleEndTurnThirdEventBlock(enum BattlerId battler)
         {
             for (gEffectBattler = 0; gEffectBattler < gBattlersCount; gEffectBattler++)
             {
+                if (GetConfig(B_UPROAR) >= GEN_5) // This effect is only present in pre-Gen 5 Uproar
+                    break;
+
+                bool32 hasSoundproof = GetConfig(B_UPROAR_IGNORE_SOUNDPROOF) < GEN_5 && GetBattlerAbility(gEffectBattler) == ABILITY_SOUNDPROOF;
+
                 if ((gBattleMons[gEffectBattler].status1 & STATUS1_SLEEP)
-                 && GetBattlerAbility(gEffectBattler) != ABILITY_SOUNDPROOF)
+                 && !hasSoundproof)
                 {
                     gBattleMons[gEffectBattler].status1 &= ~STATUS1_SLEEP;
                     gBattleMons[gEffectBattler].volatiles.nightmare = FALSE;
@@ -1238,10 +1247,10 @@ static bool32 HandleEndTurnThirdEventBlock(enum BattlerId battler)
             if (effect == FALSE)
             {
                 gBattlerAttacker = battler;
-                gBattleMons[battler].volatiles.uproarTurns--;  // uproar timer goes down
+                gBattleMons[battler].volatiles.uproarTurns--; // uproar timer goes down
                 if (gBattleMons[battler].volatiles.unableToUseMove)
                 {
-                    CancelMultiTurnMoves(battler, SKY_DROP_IGNORE);
+                    CancelMultiTurnMoves(battler);
                     gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_UPROAR_ENDS;
                 }
                 else if (gBattleMons[battler].volatiles.uproarTurns)
@@ -1252,7 +1261,7 @@ static bool32 HandleEndTurnThirdEventBlock(enum BattlerId battler)
                 else
                 {
                     gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_UPROAR_ENDS;
-                    CancelMultiTurnMoves(battler, SKY_DROP_IGNORE);
+                    CancelMultiTurnMoves(battler);
                 }
                 BattleScriptExecute(BattleScript_PrintUproarOverTurns);
                 effect = TRUE;

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "battle.h"
-#include "battle_ai_main.h"
 #include "battle_anim.h"
 #include "battle_controllers.h"
 #include "battle_interface.h"
@@ -281,7 +280,7 @@ static void RecordedOpponentHandleDrawTrainerPic(enum BattlerId battler)
     {
         if (position == B_POSITION_OPPONENT_LEFT)
         {
-            trainerPicId = TRAINER_PIC_FRONT_LEAF;
+            trainerPicId = TRAINER_PIC_LEAF;
             if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
                 xPos = 176;
             else
@@ -289,7 +288,7 @@ static void RecordedOpponentHandleDrawTrainerPic(enum BattlerId battler)
         }
         else
         {
-            trainerPicId = TRAINER_PIC_FRONT_RED;
+            trainerPicId = TRAINER_PIC_RED;
             xPos = 152;
         }
     }

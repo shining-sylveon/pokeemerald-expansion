@@ -571,12 +571,12 @@ TEST("Battle strings fit on the battle message window")
 
     s32 sixDigitNines = 999999;                                 // 36 pixels.
     u8 nickname[POKEMON_NAME_LENGTH + 1] = _("MMMMMMMMMMMM");   // 72 pixels.
-    u32 longMoveID = MOVE_NATURES_MADNESS;                      // 89 pixels.
+    enum Move longMoveID = MOVE_NATURES_MADNESS;                // 89 pixels.
     enum Ability longAbilityID = ABILITY_SUPERSWEET_SYRUP;      // 91 pixels.
-    u32 longStatName = STAT_EVASION;                            // 40 pixels.
+    enum Stat longStatName = STAT_EVASION;                      // 40 pixels.
     enum Type longTypeName = TYPE_ELECTRIC;                     // 43 pixels.
     u32 longSpeciesName = SPECIES_SANDY_SHOCKS;                 // 47 pixels.
-    u32 longItemName = ITEM_UNREMARKABLE_TEACUP;                // 73 pixels.
+    enum Item longItemName = ITEM_UNREMARKABLE_TEACUP;          // 73 pixels.
     u8 boxName[9] = _("MMMMMMMM");                              // 54 pixels.
 
     // Set longest default player name, JOHNNY
@@ -774,7 +774,7 @@ TEST("Battle strings fit on the battle message window")
         PREPARE_MON_NICK_WITH_PREFIX_LOWER_BUFFER(gBattleTextBuff1, 1, 0);
         PREPARE_ABILITY_BUFFER(gBattleTextBuff2, longAbilityID);
         break;
-    // Buffer Stat name to B_BUFF1, "drastically rose" to B_BUFF2
+    // Buffer Stat name to B_BUFF1, "rose drastically" to B_BUFF2
     case STRINGID_ATTACKERSSTATROSE:
     case STRINGID_DEFENDERSSTATROSE:
     case STRINGID_USINGITEMSTATOFPKMNROSE:
@@ -791,7 +791,6 @@ TEST("Battle strings fit on the battle message window")
         break;
     // Buffer Status name to B_BUFF2
     case STRINGID_PKMNSITEMCUREDPROBLEM:
-    case STRINGID_PKMNSXCUREDYPROBLEM:
     case STRINGID_PKMNSXCUREDITSYPROBLEM:
         StringCopy(gBattleTextBuff1, gText_Confusion);
         break;

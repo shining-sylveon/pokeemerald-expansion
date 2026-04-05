@@ -29,6 +29,7 @@
 #include "task.h"
 #include "test_runner.h"
 #include "text.h"
+#include "trainer.h"
 #include "util.h"
 #include "window.h"
 #include "line_break.h"
@@ -511,7 +512,7 @@ void HandleInputChooseTarget(enum BattlerId battler)
                  || !CanTargetBattler(battler, gMultiUsePlayerCursor, move)
                  || (moveTarget == TARGET_OPPONENT && IsOnPlayerSide(gMultiUsePlayerCursor)))
                     validTarget = FALSE;
-                
+
                 if (B_SHOW_EFFECTIVENESS && validTarget)
                     MoveSelectionDisplayMoveEffectiveness(CheckTypeEffectiveness(battler, gMultiUsePlayerCursor), battler);
 
@@ -1210,7 +1211,7 @@ static void SetLinkBattleEndCallbacks(enum BattlerId battler)
 {
     if (gWirelessCommType == 0)
     {
-        if (gReceivedRemoteLinkPlayers == 0)
+        if (!gReceivedRemoteLinkPlayers)
         {
             m4aSongNumStop(SE_LOW_HEALTH);
             gMain.inBattle = FALSE;
@@ -1424,7 +1425,7 @@ static void Task_GiveExpToMon(u8 taskId)
     if (GetBattlerCoordsIndex(battler) == BATTLE_COORDS_DOUBLES || monId != gBattlerPartyIndexes[battler]) // Give exp without moving the expbar.
     {
         struct Pokemon *mon = &gPlayerParty[monId];
-        u16 species = GetMonData(mon, MON_DATA_SPECIES);
+        enum Species species = GetMonData(mon, MON_DATA_SPECIES);
         u8 level = GetMonData(mon, MON_DATA_LEVEL);
         u32 currExp = GetMonData(mon, MON_DATA_EXP);
         u32 nextLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level + 1];
@@ -1471,7 +1472,7 @@ static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
     enum BattlerId battler = gTasks[taskId].tExpTask_battler;
     struct Pokemon *mon = &gPlayerParty[monIndex];
     u8 level = GetMonData(mon, MON_DATA_LEVEL);
-    u16 species = GetMonData(mon, MON_DATA_SPECIES);
+    enum Species species = GetMonData(mon, MON_DATA_SPECIES);
     u32 exp = GetMonData(mon, MON_DATA_EXP);
     u32 currLvlExp = gExperienceTables[gSpeciesInfo[species].growthRate][level];
     u32 expToNextLvl;
@@ -1487,7 +1488,7 @@ static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
 static void Task_GiveExpWithExpBar(u8 taskId)
 {
     u32 level, expAfterGain;
-    u16 species;
+    enum Species species;
     u32 oldMaxHP;
     s32 currExp, expOnNextLvl, newExpPoints;
 
@@ -1710,7 +1711,7 @@ static void MoveSelectionDisplayPpNumber(enum BattlerId battler)
 static void MoveSelectionDisplayMoveType(enum BattlerId battler)
 {
     u8 *txtPtr, *end;
-    u32 speciesId = gBattleMons[battler].species;
+    enum Species speciesId = gBattleMons[battler].species;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
     enum Move move = moveInfo->moves[gMoveSelectionCursor[battler]];
@@ -1881,19 +1882,10 @@ static void PlayerHandleLoadMonSprite(enum BattlerId battler)
 
 enum TrainerPicID LinkPlayerGetTrainerPicId(u32 multiplayerId)
 {
-    enum TrainerPicID trainerPicId;
-
     u8 gender = gLinkPlayers[multiplayerId].gender;
     enum GameVersion version = gLinkPlayers[multiplayerId].version & 0xFF;
 
-    if (version == VERSION_FIRE_RED || version == VERSION_LEAF_GREEN)
-        trainerPicId = gender + TRAINER_PIC_BACK_RED;
-    else if (version == VERSION_RUBY || version == VERSION_SAPPHIRE)
-        trainerPicId = gender + TRAINER_PIC_BACK_RUBY_SAPPHIRE_BRENDAN;
-    else
-        trainerPicId = gender + TRAINER_PIC_BACK_BRENDAN;
-
-    return trainerPicId;
+    return GetPlayerTrainerPic(gender, version);
 }
 
 static enum TrainerPicID PlayerGetTrainerBackPicId(void)
@@ -1903,7 +1895,7 @@ static enum TrainerPicID PlayerGetTrainerBackPicId(void)
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
         trainerPicId = LinkPlayerGetTrainerPicId(GetMultiplayerId());
     else
-        trainerPicId = gSaveBlock2Ptr->playerGender == FEMALE ? TRAINER_BACK_PIC_PLAYER_FEMALE : TRAINER_BACK_PIC_PLAYER_MALE;
+        trainerPicId = GetPlayerTrainerPic(gSaveBlock2Ptr->playerGender, GAME_VERSION);
 
     return trainerPicId;
 }
@@ -1919,12 +1911,12 @@ static void PlayerHandleDrawTrainerPic(enum BattlerId battler)
 
     if (IsMultibattleTest())
     {
-        trainerPicId = TRAINER_PIC_BACK_BRENDAN;
+        trainerPicId = TRAINER_PIC_BRENDAN;
         if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
             xPos = 32;
         else
             xPos = 80;
-        yPos = (8 - gTrainerBacksprites[trainerPicId].coordinates.size) * 4 + 80;
+        yPos = (8 - GetTrainerBackPicCoords(trainerPicId)->size) * 4 + 80;
     }
     else
     {
@@ -1944,13 +1936,13 @@ static void PlayerHandleDrawTrainerPic(enum BattlerId battler)
             }
             else
             {
-                yPos = (8 - gTrainerBacksprites[trainerPicId].coordinates.size) * 4 + 80;
+                yPos = (8 - GetTrainerBackPicCoords(trainerPicId)->size) * 4 + 80;
             }
         }
         else
         {
             xPos = 80;
-            yPos = (8 - gTrainerBacksprites[trainerPicId].coordinates.size) * 4 + 80;
+            yPos = (8 - GetTrainerBackPicCoords(trainerPicId)->size) * 4 + 80;
         }
     }
 
@@ -2302,8 +2294,8 @@ static void PlayerHandleOneReturnValue_Duplicate(enum BattlerId battler)
 
 static void PlayerHandleIntroTrainerBallThrow(enum BattlerId battler)
 {
-    const u32 paletteIndex = PlayerGetTrainerBackPicId() - TRAINER_PIC_FRONT_COUNT;
-    const u16 *trainerPal = gTrainerBacksprites[paletteIndex].palette.data;
+    enum TrainerPicID trainerPicID = PlayerGetTrainerBackPicId();
+    const u16 *trainerPal = GetTrainerBackPicPalette(trainerPicID);
     BtlController_HandleIntroTrainerBallThrow(battler, 0xD6F8, trainerPal, 31, Intro_TryShinyAnimShowHealthbox);
 }
 
@@ -2409,7 +2401,7 @@ static bool32 ShouldShowTypeEffectiveness(u32 targetId)
 static u32 CheckTypeEffectiveness(enum BattlerId battlerAtk, enum BattlerId battlerDef)
 {
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battlerAtk][4]);
-    struct BattleContext ctx = {0};
+    struct DamageContext ctx = {0};
     ctx.battlerAtk = battlerAtk;
     ctx.battlerDef = battlerDef;
     ctx.move = moveInfo->moves[gMoveSelectionCursor[battlerAtk]];
