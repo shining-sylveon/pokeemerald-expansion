@@ -51,10 +51,10 @@
 
 #else
 
-#define FLAG_UNUSED_0x020    0x20 // Unused Flag
-#define FLAG_UNUSED_0x021    0x21 // Unused Flag
-#define FLAG_UNUSED_0x022    0x22 // Unused Flag
-#define FLAG_UNUSED_0x023    0x23 // Unused Flag
+#define FLAG_HIDE_GRASS_BALL 0x20 // hides the grass starter
+#define FLAG_HIDE_WATER_BALL 0x21 // hides the water starter
+#define FLAG_HIDE_FIRE_BALL  0x22 // hides the fire starter
+#define FLAG_STARTER_TAKEN   0x23 // stops you from getting a second starter
 #define FLAG_UNUSED_0x024    0x24 // Unused Flag
 #define FLAG_UNUSED_0x025    0x25 // Unused Flag
 #define FLAG_UNUSED_0x026    0x26 // Unused Flag

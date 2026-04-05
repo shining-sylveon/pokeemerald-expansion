@@ -288,7 +288,8 @@ LittlerootTown_ProfessorBirchsLab_EventScript_AideReceivedStarter::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil::
 	release
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_FireStarterCall
 	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
 	waitmovement 0
 	showmonpic SPECIES_CYNDAQUIL, 10, 3
@@ -297,9 +298,16 @@ LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil::
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil
 	end
 
+LittlerootTown_ProfessorBirchsLab_EventScript_FireStarterCall::
+	@buffers the right starter for the chosen region, will use a switch case, unused for now
+	return
+
+
+
 LittlerootTown_ProfessorBirchsLab_EventScript_Totodile::
 	release
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_FireStarterCall
 	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
 	waitmovement 0
 	showmonpic SPECIES_TOTODILE, 10, 3
@@ -308,9 +316,15 @@ LittlerootTown_ProfessorBirchsLab_EventScript_Totodile::
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile
 	end
 
+LittlerootTown_ProfessorBirchsLab_EventScript_WaterStarterCall::
+	@buffers the right starter for the chosen region, will use a switch case, unused for now
+	return
+
+
 LittlerootTown_ProfessorBirchsLab_EventScript_Chikorita::
 	release
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_GrassStarterCall
 	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
 	waitmovement 0
 	showmonpic SPECIES_CHIKORITA, 10, 3
@@ -318,6 +332,10 @@ LittlerootTown_ProfessorBirchsLab_EventScript_Chikorita::
 	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita
 	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GrassStarterCall::
+	@buffers the right starter for the chosen region, will use a switch case, unused for now
+	return
 
 LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter::
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_BetterLeaveOthersAlone, MSGBOX_DEFAULT
@@ -331,6 +349,8 @@ LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
 	bufferspeciesname STR_VAR_1, SPECIES_CYNDAQUIL
 	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_CYNDAQUIL
 	givemon SPECIES_CYNDAQUIL, 5
@@ -372,6 +392,8 @@ LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedCyndaquil::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
 	bufferspeciesname STR_VAR_1, SPECIES_TOTODILE
 	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_TOTODILE
 	givemon SPECIES_TOTODILE, 5
@@ -413,6 +435,8 @@ LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedTotodile::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
 	bufferspeciesname STR_VAR_1, SPECIES_CHIKORITA
 	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_CHIKORITA
 	givemon SPECIES_CHIKORITA, 5
