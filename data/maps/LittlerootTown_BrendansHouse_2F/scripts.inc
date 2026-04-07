@@ -1,15 +1,47 @@
 LittlerootTown_BrendansHouse_2F_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, LittlerootTown_BrendansHouse_2F_OnTransition
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, LittlerootTown_BrendansHouse_2F_OnWarp
+	map_script MAP_SCRIPT_ON_FRAME_TABLE, LittlerootTown_BrendansHouse_2F_OnFrame
 	.byte 0
 
 LittlerootTown_BrendansHouse_2F_OnTransition:
+	call_if_eq VAR_LITTLEROOT_INTRO_STATE, 0, LittlerootTown_BrendansHouse_2F_Eventscript_IntroSetup
 	call_if_lt VAR_LITTLEROOT_RIVAL_STATE, 2, LittlerootTown_BrendansHouse_2F_EventScript_CheckSetReadyToMeetBrendan
 	call_if_ge VAR_LITTLEROOT_RIVAL_STATE, 3, LittlerootTown_BrendansHouse_2F_EventScript_CheckShouldUpdateBrendanPos
 	call_if_eq VAR_LITTLEROOT_INTRO_STATE, 4, PlayersHouse_2F_EventScript_BlockStairsUntilClockIsSet
 	call SecretBase_EventScript_SetDecorationFlags
 	setvar VAR_SECRET_BASE_INITIALIZED, 0
 	end
+
+LittlerootTown_BrendansHouse_2F_Eventscript_IntroSetup:
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F_POKE_BALL
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_PLAYERS_HOUSE_VIGOROTH_1
+	setflag FLAG_HIDE_LITTLEROOT_TOWN_PLAYERS_HOUSE_VIGOROTH_2
+	setvar VAR_0x8004, LOCALID_PLAYERS_HOUSE_1F_MOM
+	setvar VAR_0x8005, MALE
+	return
+
+LittlerootTown_BrendansHouse_2F_OnFrame:
+	map_script_2 VAR_LITTLEROOT_INTRO_STATE, 0, LittlerootTown_BrendansHouse_2F_EventScript_IntroBrendan
+	.2byte 0
+
+LittlerootTown_BrendansHouse_2F_EventScript_IntroBrendan:
+	lockall
+	msgbox PlayersHouse_2F_Text_ClockBroke, MSGBOX_DEFAULT
+	closemessage
+	setvar VAR_LITTLEROOT_INTRO_STATE, 1
+	releaseall
+	end
+
+LittlerootTown_BrendansHouse_2F_PreventLeaving::
+	lockall
+	msgbox PlayersHouse_2F_Text_ClockBroke, MSGBOX_DEFAULT
+	closemessage
+	applymovement LOCALID_PLAYER, Playershouse_2F_Movement_Down
+	waitmovement
+	releaseall
+	end
+
 
 LittlerootTown_BrendansHouse_2F_EventScript_CheckShouldUpdateBrendanPos::
 	goto_if_set FLAG_MET_RIVAL_LILYCOVE, LittlerootTown_BrendansHouse_2F_EventScript_TryUpdateBrendanPos
@@ -270,6 +302,11 @@ PlayersHouse_2F_EventScript_GameCube::
 	msgbox PlayersHouse_2F_Text_ItsAGameCube, MSGBOX_SIGN
 	end
 
+PlayersHouse_2F_Text_ClockBroke:
+	.string "The clock seems to have\n"
+	.string "broken again...\l"
+	.string "Let's fix it first.$"
+
 PlayersHouse_2F_Text_ClockIsStopped:
 	.string "The clock is stopped…\p"
 	.string "Better set it and start it!$"
@@ -300,3 +337,7 @@ PlayersHouse_2F_Text_ItsAGameCube:
 	.string "It's a Nintendo GameCube.\p"
 	.string "A Game Boy Advance is connected to\n"
 	.string "serve as the Controller.$"
+
+Playershouse_2F_Movement_Down:
+	walk_down
+	step_end
