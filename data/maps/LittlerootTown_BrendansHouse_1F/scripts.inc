@@ -72,7 +72,8 @@ LittlerootTown_BrendansHouse_1F_EventScript_EnterHouseMovingIn::
 	lockall
 	applymovement LOCALID_PLAYERS_HOUSE_1F_MOM, PlayersHouse_1F_Movement_MotherUp
 	waitmovement
-	msgbox PlayersHouse_1F_Text_RunningShoesObtain,MSGBOX_DEFAULT
+	applymovement LOCALID_PLAYER, PlayersHouse_1F_Movement_FaceRight
+	msgbox PlayersHouse_1F_Text_RunningShoesObtain, MSGBOX_DEFAULT
 	setflag FLAG_RECEIVED_RUNNING_SHOES
 	setflag FLAG_SYS_B_DASH
 	playfanfare MUS_OBTAIN_ITEM
@@ -453,4 +454,8 @@ PlayersHouse_1F_Movement_MotherUp:
 	walk_up
 	walk_up
 	face_left
+	step_end
+
+PlayersHouse_1F_Movement_FaceRight:
+	face_right
 	step_end

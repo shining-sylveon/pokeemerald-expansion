@@ -446,7 +446,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_ChikoritaTransferredToPC::
 LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedChikorita::
 	hidemonpic
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_GrassyPatchWaiting, MSGBOX_DEFAULT
-	setvar VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_RivalFight
 	releaseall
 	end
 
@@ -458,13 +458,37 @@ LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter::
 	return
 
 LittlerootTown_ProfessorBirchsLab_EventScript_RivalFight::
+	setflag FLAG_RESCUED_BIRCH
+	setflag FLAG_HIDE_ROUTE_101_ZIGZAGOON
+	setflag FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE
 	setvar VAR_LITTLEROOT_INTRO_STATE, 4
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_RivalBattle
 	switch VAR_STARTER_MON
-	case 0, Route103_EventScript_StartBrendanBattleTreecko
-	case 1, Route103_EventScript_StartBrendanBattleTorchic
-	case 2, Route103_EventScript_StartBrendanBattleMudkip
+	case 0, LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTreecko
+	case 1, LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTorchic
+	case 2, LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleMudkip
 	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTreecko::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TREECKO, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTorchic::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TORCHIC, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleMudkip::
+	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_MUDKIP, Route103_Text_MayDefeated
+	goto Route103_EventScript_AfterMayBattle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle:
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_Gg, MSGBOX_DEFAULT
+	releaseall
+	end
+
 
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Birch::
@@ -1007,3 +1031,8 @@ LittlerootTown_ProfessorBirchsLab_Text_ScottAboardSSTidalCall:
 	.string "we meet. I'll be waiting!\p"
 	.string "… … … … … …\n"
 	.string "… … … … … Click!$"
+
+LittlerootTown_ProfessorBirchsLab_Text_Gg:
+	.string "{PLAYER}, GG!\n"
+	.string "Next time, when we've caught a few\p"
+	.string "Pokémon, it will be great!$"
