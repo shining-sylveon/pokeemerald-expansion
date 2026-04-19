@@ -597,6 +597,32 @@ PlayersHouse_1F_EventScript_MomApproachPlayerAfterTVFemale::
 	waitmovement 0
 	return
 
+PlayersHouse_1F_EventScript_GiveRunningShoes::
+	lockall
+	applymovement LOCALID_PLAYERS_HOUSE_1F_MOM, PlayersHouse_1F_Movement_MotherUp
+	waitmovement
+	checkplayergender
+	call_if_eq VAR_RESULT, MALE, PlayersHouse_1F_EventScript_MaleMovement
+	call_if_eq VAR_RESULT, FEMALE, PlayersHouse_1F_EventScript_FemaleMovement
+	msgbox PlayersHouse_1F_Text_RunningShoesObtain, MSGBOX_DEFAULT
+	setflag FLAG_RECEIVED_RUNNING_SHOES
+	setflag FLAG_SYS_B_DASH
+	playfanfare MUS_OBTAIN_ITEM
+	waitfanfare
+	setflag FLAG_RECEIVED_RUNNING_SHOES
+	msgbox LittlerootTown_Text_ExplainRunningShoes, MSGBOX_DEFAULT
+	setvar VAR_LITTLEROOT_INTRO_STATE, 3
+	releaseall
+	end
+
+PlayersHouse_1F_EventScript_MaleMovement:
+	applymovement LOCALID_PLAYERS_HOUSE_1F_MOM, PlayersHouse_1F_Movement_LookLeft
+	return
+
+PlayersHouse_1F_EventScript_FemaleMovement:
+	applymovement LOCALID_PLAYERS_HOUSE_1F_MOM, PlayersHouse_1F_Movement_LookRight
+	return
+
 PlayersHouse_1F_Movement_DadApproachPlayerMale:
 	walk_right
 	walk_right
@@ -673,3 +699,18 @@ PlayersHouse_1F_Movement_PlayerApproachTVForLatiFemale:
 EventScript_RunningShoesManual::
 	msgbox PlayersHouse_1F_Text_RunningShoesManual, MSGBOX_SIGN
 	end
+
+PlayersHouse_1F_Movement_MotherUp:
+	walk_up
+	walk_up
+	walk_up
+	walk_up
+	walk_up
+	step_end
+
+PlayersHouse_1F_Movement_LookLeft:
+	face_left
+	step_end
+PlayersHouse_1F_Movement_LookRight:
+	face_right
+	step_end

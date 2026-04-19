@@ -45,7 +45,7 @@ LittlerootTown_BrendansHouse_1F_EventScript_MoveMomToDoor::
 @ Many of the below scripts have no gender check because they assume youre in the correct house
 @ The below SS Ticket script uses Mays house state by accident(?), but theyre both set identically after the intro
 LittlerootTown_BrendansHouse_1F_OnFrame:
-	map_script_2 VAR_LITTLEROOT_INTRO_STATE, 2, LittlerootTown_BrendansHouse_1F_EventScript_EnterHouseMovingIn
+	map_script_2 VAR_LITTLEROOT_INTRO_STATE, 2, PlayersHouse_1F_EventScript_GiveRunningShoes
 	map_script_2 VAR_LITTLEROOT_INTRO_STATE, 5, LittlerootTown_BrendansHouse_1F_EventScript_GoUpstairsToSetClock
 	map_script_2 VAR_LITTLEROOT_INTRO_STATE, 6, LittlerootTown_BrendansHouse_1F_EventScript_PetalburgGymReport
 	map_script_2 VAR_LITTLEROOT_HOUSES_STATE_MAY, 1, LittlerootTown_BrendansHouse_1F_EventScript_YoureNewNeighbor
@@ -68,21 +68,6 @@ LittlerootTown_BrendansHouse_1F_Movement_PushTowardStairs:
 	walk_up
 	step_end
 
-LittlerootTown_BrendansHouse_1F_EventScript_EnterHouseMovingIn::
-	lockall
-	applymovement LOCALID_PLAYERS_HOUSE_1F_MOM, PlayersHouse_1F_Movement_MotherUp
-	waitmovement
-	applymovement LOCALID_PLAYER, PlayersHouse_1F_Movement_FaceRight
-	msgbox PlayersHouse_1F_Text_RunningShoesObtain, MSGBOX_DEFAULT
-	setflag FLAG_RECEIVED_RUNNING_SHOES
-	setflag FLAG_SYS_B_DASH
-	playfanfare MUS_OBTAIN_ITEM
-	waitfanfare
-	setflag FLAG_RECEIVED_RUNNING_SHOES
-	msgbox LittlerootTown_Text_ExplainRunningShoes, MSGBOX_DEFAULT
-	setvar VAR_LITTLEROOT_INTRO_STATE, 3
-	releaseall
-	end
 
 LittlerootTown_BrendansHouse_1F_EventScript_PetalburgGymReport::
 	lockall
@@ -447,15 +432,3 @@ PlayersHouse_1F_Text_RunningShoesObtain:
 	.string "For you!\p"
 	.string "A pair of RUNNING SHOES!$"
 
-PlayersHouse_1F_Movement_MotherUp:
-	walk_up
-	walk_up
-	walk_up
-	walk_up
-	walk_up
-	face_left
-	step_end
-
-PlayersHouse_1F_Movement_FaceRight:
-	face_right
-	step_end
