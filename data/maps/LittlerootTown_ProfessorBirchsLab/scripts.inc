@@ -463,25 +463,53 @@ LittlerootTown_ProfessorBirchsLab_EventScript_RivalFight::
 	setflag FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE
 	setvar VAR_LITTLEROOT_INTRO_STATE, 4
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_RivalBattle
+	checkplayergender
+	goto_if_eq VAR_RESULT, MALE, LittlerootTown_ProfessorBirchsLab_EventScript_MayRivalBattle
+	goto_if_eq VAR_RESULT, FEMALE,LittlerootTown_ProfessorBirchsLab_EventScript_BrendanRivalBattle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_BrendanRivalBattle:
+	switch VAR_STARTER_MON
+	case 0, LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleTreecko
+	case 1, LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleTorchic
+	case 2, LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleMudkip
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_MayRivalBattle:
 	switch VAR_STARTER_MON
 	case 0, LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTreecko
 	case 1, LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTorchic
 	case 2, LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleMudkip
 	end
 
+LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleTreecko::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TREECKO, Route103_Text_MayDefeated
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleTorchic::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TORCHIC, Route103_Text_MayDefeated
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleMudkip::
+	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_MUDKIP, Route103_Text_MayDefeated
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
+	end
+
 LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTreecko::
 	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TREECKO, Route103_Text_MayDefeated
-	goto Route103_EventScript_AfterMayBattle
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTorchic::
 	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TORCHIC, Route103_Text_MayDefeated
-	goto Route103_EventScript_AfterMayBattle
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleMudkip::
 	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_MUDKIP, Route103_Text_MayDefeated
-	goto Route103_EventScript_AfterMayBattle
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle:
@@ -1034,5 +1062,5 @@ LittlerootTown_ProfessorBirchsLab_Text_ScottAboardSSTidalCall:
 
 LittlerootTown_ProfessorBirchsLab_Text_Gg:
 	.string "{PLAYER}, GG!\n"
-	.string "Next time, when we've caught a few\p"
+	.string "Next time, when we've caught more\p"
 	.string "Pokémon, it will be great!$"
