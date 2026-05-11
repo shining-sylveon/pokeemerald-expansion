@@ -1122,6 +1122,26 @@ static const struct MenuAction sMultichoiceList_HOF_Eggs_Victories_Quit[] = {
     {gText_ShopQuit}
 };
 
+static const struct MenuAction sMultichoiceList_Starter_Region[] = {
+    {gText_Kanto},
+    {gText_Johto},
+    {gText_Hoenn},
+    {gText_Sinnoh},
+    {gText_Unova},
+    {gText_Kalos},
+    {gText_Aloha},
+    {gText_Galar},
+    {gText_Paldea}
+};
+
+static const struct MenuAction sMultichoiceList_Difficulty_Choice[] = {
+    {gText_Easy},
+    {gText_Normal},
+    {gText_Hard},
+    {gText_Insane}
+};
+
+
 static const struct MenuAction MultichoiceList_Exit[] =
 {
     {gText_Exit},
@@ -1294,6 +1314,8 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_HOF_VICTORIES_QUIT]                         = MULTICHOICE(sMultichoiceList_HOF_Victories_Quit),
     [MULTI_EGGS_VICTORIES_QUIT]                        = MULTICHOICE(sMultichoiceList_Eggs_Victories_Quit),
     [MULTI_HOF_EGGS_VICTORIES_QUIT]                    = MULTICHOICE(sMultichoiceList_HOF_Eggs_Victories_Quit),
+    [MULTI_STARTER_REGION]                             = MULTICHOICE(sMultichoiceList_Starter_Region),
+    [MULTI_DIFFICULTY_SELECT]                           = MULTICHOICE(sMultichoiceList_Difficulty_Choice),
 };
 
 const u8 *const gStdStrings[] =

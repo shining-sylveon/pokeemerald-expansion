@@ -55,7 +55,7 @@
 #define FLAG_HIDE_WATER_BALL 0x21 // hides the water starter
 #define FLAG_HIDE_FIRE_BALL  0x22 // hides the fire starter
 #define FLAG_STARTER_TAKEN   0x23 // stops you from getting a second starter
-#define FLAG_UNUSED_0x024    0x24 // Unused Flag
+#define FLAG_NO_WHITEOUT     0x24 // Battle flag, prevents whiteouts while active
 #define FLAG_UNUSED_0x025    0x25 // Unused Flag
 #define FLAG_UNUSED_0x026    0x26 // Unused Flag
 #define FLAG_UNUSED_0x027    0x27 // Unused Flag

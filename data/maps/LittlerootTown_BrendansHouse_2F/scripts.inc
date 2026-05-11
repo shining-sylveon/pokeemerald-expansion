@@ -32,6 +32,9 @@ LittlerootTown_BrendansHouse_2F_OnFrame:
 
 LittlerootTown_BrendansHouse_2F_EventScript_IntroBrendan:
 	lockall
+	msgbox PlayersHouse_2F_Text_DifficulySelect, MSGBOX_DEFAULT
+	multichoice 22, 6, MULTI_DIFFICULTY_SELECT, TRUE
+	copyvar VAR_RESULT, VAR_DIFFICULTY
 	msgbox PlayersHouse_2F_Text_ClockBroke, MSGBOX_DEFAULT
 	closemessage
 	setvar VAR_LITTLEROOT_INTRO_STATE, 1
@@ -306,6 +309,10 @@ PlayersHouse_2F_EventScript_Notebook::
 PlayersHouse_2F_EventScript_GameCube::
 	msgbox PlayersHouse_2F_Text_ItsAGameCube, MSGBOX_SIGN
 	end
+
+PlayersHouse_2F_Text_DifficulySelect:
+	.string "Today your Pokémon journey starts,\n"
+	.string "how hard will it be?$"
 
 PlayersHouse_2F_Text_ClockBroke:
 	.string "The clock seems to have\n"

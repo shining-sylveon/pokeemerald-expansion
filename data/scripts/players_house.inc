@@ -611,6 +611,8 @@ PlayersHouse_1F_EventScript_GiveRunningShoes::
 	waitfanfare
 	setflag FLAG_RECEIVED_RUNNING_SHOES
 	msgbox LittlerootTown_Text_ExplainRunningShoes, MSGBOX_DEFAULT
+	multichoice 22, 0, MULTI_STARTER_REGION, TRUE
+	copyvar VAR_STARTER_REGION, VAR_RESULT
 	setvar VAR_LITTLEROOT_INTRO_STATE, 3
 	releaseall
 	end

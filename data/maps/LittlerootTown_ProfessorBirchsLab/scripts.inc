@@ -256,46 +256,48 @@ LittlerootTown_ProfessorBirchsLab_EventScript_AideReceivedStarter::
 	release
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil::
-	release
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GrassStarter::
 	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
-	call LittlerootTown_ProfessorBirchsLab_EventScript_FireStarterCall
-	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
-	waitmovement 0
-	showmonpic SPECIES_CYNDAQUIL, 10, 3
-	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil
+	switch VAR_STARTER_REGION
+	case 0, LittlerootTown_ProfessorBirchsLab_EventScript_Bulbasaur
+	case 1, LittlerootTown_ProfessorBirchsLab_EventScript_Chikorita
+	case 2, LittlerootTown_ProfessorBirchsLab_EventScript_Treecko
+	case 3, LittlerootTown_ProfessorBirchsLab_EventScript_Turtwig
+	case 4, LittlerootTown_ProfessorBirchsLab_EventScript_Snivy
+	case 5, LittlerootTown_ProfessorBirchsLab_EventScript_Chespin
+	case 6, LittlerootTown_ProfessorBirchsLab_EventScript_Rowlet
+	case 7, LittlerootTown_ProfessorBirchsLab_EventScript_Grookey
+	case 8, LittlerootTown_ProfessorBirchsLab_EventScript_Sprigatito
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_FireStarterCall::
-	@buffers the right starter for the chosen region, will use a switch case, unused for now
-	return
-
-
-
-LittlerootTown_ProfessorBirchsLab_EventScript_Totodile::
-	release
-	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
-	call LittlerootTown_ProfessorBirchsLab_EventScript_FireStarterCall
+LittlerootTown_ProfessorBirchsLab_EventScript_Bulbasaur::
 	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_BULBASAUR
 	waitmovement 0
-	showmonpic SPECIES_TOTODILE, 10, 3
-	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	showmonpic SPECIES_BULBASAUR, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveBulbasaur
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_WaterStarterCall::
-	@buffers the right starter for the chosen region, will use a switch case, unused for now
-	return
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveBulbasaur::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_BULBASAUR
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_BULBASAUR
+	givemon SPECIES_BULBASAUR, 5
+	setvar VAR_STARTER_MON, 0
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
 
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Chikorita::
-	release
-	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
-	call LittlerootTown_ProfessorBirchsLab_EventScript_GrassStarterCall
 	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_CHIKORITA
 	waitmovement 0
 	showmonpic SPECIES_CHIKORITA, 10, 3
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
@@ -303,9 +305,586 @@ LittlerootTown_ProfessorBirchsLab_EventScript_Chikorita::
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_GrassStarterCall::
-	@buffers the right starter for the chosen region, will use a switch case, unused for now
-	return
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_CHIKORITA
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_CHIKORITA
+	givemon SPECIES_CHIKORITA, 5
+	setvar VAR_STARTER_MON, 0
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Treecko::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_TREECKO
+	waitmovement 0
+	showmonpic SPECIES_TREECKO, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTreecko
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveTreecko::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_TREECKO
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_TREECKO
+	givemon SPECIES_TREECKO, 5
+	setvar VAR_STARTER_MON, 0
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Turtwig::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_TURTWIG
+	waitmovement 0
+	showmonpic SPECIES_TURTWIG, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTurtwig
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveTurtwig::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_TURTWIG
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_TURTWIG
+	givemon SPECIES_TURTWIG, 5
+	setvar VAR_STARTER_MON, 0
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Snivy::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_SNIVY
+	waitmovement 0
+	showmonpic SPECIES_SNIVY, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveSnivy
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveSnivy::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_SNIVY
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_SNIVY
+	givemon SPECIES_SNIVY, 5
+	setvar VAR_STARTER_MON, 0
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Chespin::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_CHESPIN
+	waitmovement 0
+	showmonpic SPECIES_CHESPIN, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveChespin
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveChespin::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_CHESPIN
+	givemon SPECIES_CHESPIN, 5
+	setvar VAR_STARTER_MON, 0
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Rowlet::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_ROWLET
+	waitmovement 0
+	showmonpic SPECIES_ROWLET, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveRowlet
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveRowlet::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_ROWLET
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_ROWLET
+	givemon SPECIES_ROWLET, 5
+	setvar VAR_STARTER_MON, 0
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Grookey::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_GROOKEY
+	waitmovement 0
+	showmonpic SPECIES_GROOKEY, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveGrookey
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveGrookey::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_GROOKEY
+	givemon SPECIES_GROOKEY, 5
+	setvar VAR_STARTER_MON, 0
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Sprigatito::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	waitmovement 0
+	bufferspeciesname 0, SPECIES_SPRIGATITO
+	showmonpic SPECIES_SPRIGATITO, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveSprigatito
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveSprigatito::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	bufferspeciesname STR_VAR_1, SPECIES_SPRIGATITO
+	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_SPRIGATITO
+	givemon SPECIES_SPRIGATITO, 5
+	setvar VAR_STARTER_MON, 0
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+
+LittlerootTown_ProfessorBirchsLab_EventScript_WaterStarter::
+	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	switch VAR_STARTER_REGION
+	case 0, LittlerootTown_ProfessorBirchsLab_EventScript_Squirtle
+	case 1, LittlerootTown_ProfessorBirchsLab_EventScript_Totodile
+	case 2, LittlerootTown_ProfessorBirchsLab_EventScript_Mudkip
+	case 3, LittlerootTown_ProfessorBirchsLab_EventScript_Piplup
+	case 4, LittlerootTown_ProfessorBirchsLab_EventScript_Oshawott
+	case 5, LittlerootTown_ProfessorBirchsLab_EventScript_Froakie
+	case 6, LittlerootTown_ProfessorBirchsLab_EventScript_Popplio
+	case 7, LittlerootTown_ProfessorBirchsLab_EventScript_Sobble
+	case 8, LittlerootTown_ProfessorBirchsLab_EventScript_Quaxly
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Squirtle::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_SQUIRTLE
+	waitmovement 0
+	showmonpic SPECIES_SQUIRTLE, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveSquirtle
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveSquirtle::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_SQUIRTLE, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Totodile::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_TOTODILE
+	waitmovement 0
+	showmonpic SPECIES_TOTODILE, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_TOTODILE, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Mudkip::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_MUDKIP
+	waitmovement 0
+	showmonpic SPECIES_MUDKIP, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveMudkip
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveMudkip::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_MUDKIP, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Piplup::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_PIPLUP
+	waitmovement 0
+	showmonpic SPECIES_PIPLUP, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GivePiplup
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GivePiplup::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_PIPLUP, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Oshawott::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_OSHAWOTT
+	waitmovement 0
+	showmonpic SPECIES_OSHAWOTT, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveOshawott::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_OSHAWOTT, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Froakie::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_FROAKIE
+	waitmovement 0
+	showmonpic SPECIES_FROAKIE, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveFroakie
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveFroakie::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_FROAKIE, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Popplio::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_POPPLIO
+	waitmovement 0
+	showmonpic SPECIES_POPPLIO, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GivePopplio
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GivePopplio::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_POPPLIO, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Sobble::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_SOBBLE
+	waitmovement 0
+	showmonpic SPECIES_SOBBLE, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveSobble::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_SOBBLE, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Quaxly::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_QUAXLY
+	waitmovement 0
+	showmonpic SPECIES_QUAXLY, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveQuaxly
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveQuaxly::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_QUAXLY, 5
+	setvar VAR_STARTER_MON, 2
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_FireStarter::
+	goto_if_set FLAG_STARTER_TAKEN, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
+	switch VAR_STARTER_REGION
+	case 0, LittlerootTown_ProfessorBirchsLab_EventScript_Charmander
+	case 1, LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil
+	case 2, LittlerootTown_ProfessorBirchsLab_EventScript_Torchic
+	case 3, LittlerootTown_ProfessorBirchsLab_EventScript_Chimchar
+	case 4, LittlerootTown_ProfessorBirchsLab_EventScript_Tepig
+	case 5, LittlerootTown_ProfessorBirchsLab_EventScript_Fennekin
+	case 6, LittlerootTown_ProfessorBirchsLab_EventScript_Litten
+	case 7, LittlerootTown_ProfessorBirchsLab_EventScript_Scorbunny
+	case 8, LittlerootTown_ProfessorBirchsLab_EventScript_Fuecoco
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Charmander::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_CHARMANDER
+	waitmovement 0
+	showmonpic SPECIES_CHARMANDER, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveCharmander
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveCharmander::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_CHARMANDER, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_CYNDAQUIL
+	waitmovement 0
+	showmonpic SPECIES_CYNDAQUIL, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_CYNDAQUIL, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Torchic::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_TORCHIC
+	waitmovement 0
+	showmonpic SPECIES_TORCHIC, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTorchic
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveTorchic::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_TORCHIC, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Chimchar::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_CHIMCHAR
+	waitmovement 0
+	showmonpic SPECIES_CHIMCHAR, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveChimchar
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveChimchar::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_CHIMCHAR, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Tepig::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_TEPIG
+	waitmovement 0
+	showmonpic SPECIES_TEPIG, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveTepig
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveTepig::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_TEPIG, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Fennekin::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_FENNEKIN
+	waitmovement 0
+	showmonpic SPECIES_FENNEKIN, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveFennekin
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveFennekin::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_FENNEKIN, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Litten::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_LITTEN
+	waitmovement 0
+	showmonpic SPECIES_LITTEN, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveLitten
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveLitten::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_LITTEN, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Scorbunny::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_SCORBUNNY
+	waitmovement 0
+	showmonpic SPECIES_SCORBUNNY, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveScorbunny
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveScorbunny::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_SCORBUNNY, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_Fuecoco::
+	applymovement LOCALID_BIRCHS_LAB_BIRCH, Common_Movement_WalkInPlaceFasterRight
+	bufferspeciesname 0, SPECIES_FUECOCO
+	waitmovement 0
+	showmonpic SPECIES_FUECOCO, 10, 3
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GiveFuecoco
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_GiveFuecoco::
+	setflag FLAG_STARTER_TAKEN
+	setflag FLAG_SYS_POKEMON_GET
+	givemon SPECIES_FUECOCO, 5
+	setvar VAR_STARTER_MON, 1
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
+	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
+	hidemonpic
+	goto Common_EventScript_NoMoreRoomForPokemon
+	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter::
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_BetterLeaveOthersAlone, MSGBOX_DEFAULT
@@ -318,18 +897,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_TakeYourTime::
 	releaseall
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil::
-	setflag FLAG_STARTER_TAKEN
-	setflag FLAG_SYS_POKEMON_GET
-	bufferspeciesname STR_VAR_1, SPECIES_CYNDAQUIL
-	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_CYNDAQUIL
-	givemon SPECIES_CYNDAQUIL, 5
-	setvar VAR_STARTER_MON, 1
-	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty
-	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC
-	hidemonpic
-	goto Common_EventScript_NoMoreRoomForPokemon
-	end
+
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty::
 	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
@@ -362,18 +930,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedCyndaquil::
 	releaseall
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile::
-	setflag FLAG_STARTER_TAKEN
-	setflag FLAG_SYS_POKEMON_GET
-	bufferspeciesname STR_VAR_1, SPECIES_TOTODILE
-	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_TOTODILE
-	givemon SPECIES_TOTODILE, 5
-	setvar VAR_STARTER_MON, 2
-	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty
-	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC
-	hidemonpic
-	goto Common_EventScript_NoMoreRoomForPokemon
-	end
+
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty::
 	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
@@ -406,18 +963,6 @@ LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedTotodile::
 	releaseall
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita::
-	setflag FLAG_STARTER_TAKEN
-	setflag FLAG_SYS_POKEMON_GET
-	bufferspeciesname STR_VAR_1, SPECIES_CHIKORITA
-	setvar VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_CHIKORITA
-	givemon SPECIES_CHIKORITA, 5
-	setvar VAR_STARTER_MON, 0
-	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PARTY, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty
-	goto_if_eq VAR_RESULT, MON_GIVEN_TO_PC, LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC
-	hidemonpic
-	goto Common_EventScript_NoMoreRoomForPokemon
-	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty::
 	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
@@ -461,9 +1006,11 @@ LittlerootTown_ProfessorBirchsLab_EventScript_RivalFight::
 	setflag FLAG_RESCUED_BIRCH
 	setflag FLAG_HIDE_ROUTE_101_ZIGZAGOON
 	setflag FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE
-	setvar VAR_LITTLEROOT_INTRO_STATE, 4
+	setvar VAR_LITTLEROOT_INTRO_STATE, 6
+	setvar VAR_LITTLEROOT_TOWN_STATE, 4
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_RivalBattle
 	checkplayergender
+	setflag FLAG_NO_WHITEOUT
 	goto_if_eq VAR_RESULT, MALE, LittlerootTown_ProfessorBirchsLab_EventScript_MayRivalBattle
 	goto_if_eq VAR_RESULT, FEMALE,LittlerootTown_ProfessorBirchsLab_EventScript_BrendanRivalBattle
 	end
@@ -483,37 +1030,40 @@ LittlerootTown_ProfessorBirchsLab_EventScript_MayRivalBattle:
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleTreecko::
-	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TREECKO, Route103_Text_MayDefeated
+	trainerbattle_earlyrival TRAINER_BRENDAN_ROUTE_103_TREECKO, FLAG_HIDE_GRASS_BALL, Route103_Text_MayDefeated, LittlerootTown_professorBirchsLab_Text_RivalWon
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleTorchic::
-	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_TORCHIC, Route103_Text_MayDefeated
+	trainerbattle_earlyrival TRAINER_BRENDAN_ROUTE_103_TORCHIC, FLAG_HIDE_FIRE_BALL, Route103_Text_MayDefeated, LittlerootTown_professorBirchsLab_Text_RivalWon
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartBrendanBattleMudkip::
-	trainerbattle_no_intro TRAINER_BRENDAN_ROUTE_103_MUDKIP, Route103_Text_MayDefeated
+	trainerbattle_earlyrival TRAINER_BRENDAN_ROUTE_103_MUDKIP, FLAG_HIDE_WATER_BALL, Route103_Text_MayDefeated, LittlerootTown_professorBirchsLab_Text_RivalWon
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTreecko::
-	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TREECKO, Route103_Text_MayDefeated
+	trainerbattle_earlyrival TRAINER_MAY_ROUTE_103_TREECKO, FLAG_HIDE_GRASS_BALL, Route103_Text_MayDefeated, LittlerootTown_professorBirchsLab_Text_RivalWon
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleTorchic::
-	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_TORCHIC, Route103_Text_MayDefeated
+	trainerbattle_earlyrival TRAINER_MAY_ROUTE_103_TORCHIC, FLAG_HIDE_FIRE_BALL, Route103_Text_MayDefeated, LittlerootTown_professorBirchsLab_Text_RivalWon
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_StartMayBattleMudkip::
-	trainerbattle_no_intro TRAINER_MAY_ROUTE_103_MUDKIP, Route103_Text_MayDefeated
+	trainerbattle_earlyrival TRAINER_MAY_ROUTE_103_MUDKIP, FLAG_HIDE_WATER_BALL, Route103_Text_MayDefeated, LittlerootTown_professorBirchsLab_Text_RivalWon
 	goto LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_AfterBattle:
+	clearflag FLAG_NO_WHITEOUT
+	setflag FLAG_HIDE_ROUTE_103_RIVAL
 	msgbox LittlerootTown_ProfessorBirchsLab_Text_Gg, MSGBOX_DEFAULT
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_GivePokedex
 	releaseall
 	end
 
@@ -569,7 +1119,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_GivePokedex::
 	closemessage
 	applymovement LOCALID_BIRCHS_LAB_RIVAL, LittlerootTown_ProfessorBirchsLab_Movement_RivalApproachPlayer
 	waitmovement 0
-	applymovement LOCALID_PLAYER, Common_Movement_WalkInPlaceFasterRight
+	applymovement LOCALID_PLAYER, Common_Movement_WalkInPlaceFasterLeft
 	waitmovement 0
 	checkplayergender
 	call_if_eq VAR_RESULT, MALE, LittlerootTown_ProfessorBirchsLab_EventScript_MayGivePokeBalls
@@ -623,7 +1173,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_BrendanNoRoomForPokeBalls::
 
 LittlerootTown_ProfessorBirchsLab_Movement_RivalApproachPlayer:
 	walk_down
-	walk_in_place_faster_left
+	walk_in_place_faster_right
 	step_end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Machine::
@@ -822,7 +1372,8 @@ LittlerootTown_ProfessorBirchsLab_Text_MayGotPokedexTooTakeThese:
 	.string "MAY: Oh, wow, {PLAYER}{KUN}!\n"
 	.string "You got a POKéDEX, too!\p"
 	.string "That's great! Just like me!\n"
-	.string "I've got something for you, too!$"
+	.string "I've got something for you, too!\l"
+	.string "Catch!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CatchCutePokemonWithPokeBalls:
 	.string "MAY: It's fun if you can get a lot of\n"
@@ -843,7 +1394,7 @@ LittlerootTown_ProfessorBirchsLab_Text_BrendanGotPokedexTooTakeThese:
 	.string "BRENDAN: Huh…\n"
 	.string "So you got a POKéDEX, too.\p"
 	.string "Well then, here.\n"
-	.string "I'll give you these.$"
+	.string "I'll give you these, catch!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CatchCoolPokemonWithPokeBalls:
 	.string "BRENDAN: You know it's more fun to\n"
@@ -958,21 +1509,21 @@ LittlerootTown_ProfessorBirchsLab_Text_CanHaveAnyOneOfRarePokemon:
 
 LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil:
 	.string "PROF. BIRCH: The FIRE POKéMON\n"
-	.string "CYNDAQUIL caught your eye!\p"
+	.string "{STR_VAR_1} caught your eye!\p"
 	.string "You're as sharp as ever!\p"
-	.string "So the CYNDAQUIL is your choice?$"
+	.string "So the {STR_VAR_1} is your choice?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile:
 	.string "PROF. BIRCH: The WATER POKéMON\n"
-	.string "TOTODILE is your choice!\p"
+	.string "{STR_VAR_1} is your choice!\p"
 	.string "You know how to pick a good one.\p"
-	.string "So, you'll take the TOTODILE?$"
+	.string "So, you'll take the {STR_VAR_1}?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita:
 	.string "PROF. BIRCH: The GRASS POKéMON\n"
-	.string "CHIKORITA is your choice!\p"
+	.string "{STR_VAR_1} is your choice!\p"
 	.string "You sure know what you're doing.\p"
-	.string "So, you'll take the CHIKORITA?$"
+	.string "So, you'll take the {STR_VAR_1}?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_TakeYourTimeAllInvaluable:
 	.string "PROF. BIRCH: Take your time before\n"
@@ -1064,3 +1615,7 @@ LittlerootTown_ProfessorBirchsLab_Text_Gg:
 	.string "{PLAYER}, GG!\n"
 	.string "Next time, when we've caught more\p"
 	.string "Pokémon, it will be great!$"
+
+LittlerootTown_professorBirchsLab_Text_RivalWon:
+	.string "That's how you do it!$"
+
